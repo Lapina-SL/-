@@ -1,0 +1,135 @@
+<html>
+<head>
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Products Table</h2>
+
+<table id="productsList">
+
+</table>
+
+<form action="#">
+    <input id="product_name" placeholder="Product name">
+    <input id="product_price" placeholder="Product price">
+    <input id="product_description" placeholder="Product description">
+    <button onclick="createProduct()">Create product</button>
+</form>
+
+<input id="search_field">
+<button onclick="searchByName()">Search by Name</button>
+<p></p>
+<button onclick="loadProducts()">Show all</button>
+<script>
+    function searchByName() {
+        var name = document.getElementById("search_field").value;
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var product = JSON.parse(this.responseText);
+                var html = '<tr>\n' +
+                    '        <th>Product id</th>\n' +
+                    '        <th>Product name</th>\n' +
+                    '        <th>Product price</th>\n' +
+                    '        <th>Product description</th>\n' +
+                    '        <th>Update description</th>\n' +
+                    '        <th>Delete</th>\n' +
+                    '    </tr>';
+                html = html + '<tr><td>' + product.id + '</td>\n' +
+                    '        <td>' + product.name + '</td>\n' +
+                    '        <td>' + product.price + '</td>\n' +
+                    '        <td>' + product.description + '</td>' +
+                    '        <td><button onclick="updateProduct(' +product.id + ')">Update</button></td>' +
+                    '        <td><button onclick="deleteProduct(' + product.id + ')">Delete</button></td></tr>';
+                document.getElementById("productsList").innerHTML = html;
+            }
+        };
+        xhttp.open("GET", "http://localhost:8080/products/findByName?name=" + name, true);
+        xhttp.send();
+    }
+
+    function deleteProduct(productId) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("DELETE", "http://localhost:8080/products/delete/" + productId, true);
+        xhttp.send();
+
+        loadProducts();
+    }
+
+    function updateProduct(productId) {
+        var xhttp = new XMLHttpRequest();
+        var default = "No description";
+        var description = prompt("Type a new description", default);
+        xhttp.open("POST", "http://localhost:8080/products/update/" + productId
+                            + "?description=" + description, true);
+        xhttp.send();
+
+        loadProducts();
+    }
+
+    function createProduct() {
+        var productName = document.getElementById("product_name").value;
+        var productPrice = document.getElementById("product_price").value;
+        var productDescription = document.getElementById("product_description").value;
+
+        var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+        xmlhttp.open("POST", "http://localhost:8080/products/save");
+        xmlhttp.setRequestHeader("Content-Type", "application/json");
+        xmlhttp.send(JSON.stringify({name: productName, price: productPrice, description: productDescription}));
+
+        loadProducts();
+    }
+
+    function loadProducts() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var products = JSON.parse(this.responseText);
+                var html = '<tr>\n' +
+                    '        <th>Product id</th>\n' +
+                    '        <th>Product name</th>\n' +
+                    '        <th>Product price</th>\n' +
+                    '        <th>Product description</th>\n' +
+                    '        <th>Update description</th>\n' +
+                    '        <th>Delete</th>\n' +
+                    '    </tr>';
+                for (var i = 0; i < products.length; i++) {
+                    var product = products[i];
+                    console.log(product);
+                    html = html + '<tr><td>' + product.id + '</td>\n' +
+                        '        <td>' + product.name + '</td>\n' +
+                        '        <td>' + product.price + '</td>\n' +
+                        '        <td>' + product.description + '</td>' +
+                        '        <td><button onclick="updateProduct(' +product.id + ')">Update</button></td>' +
+                        '        <td><button onclick="deleteProduct(' + product.id + ')">Delete</button></td></tr>';
+
+                }
+                document.getElementById("productsList").innerHTML = html;
+            }
+        };
+        xhttp.open("GET", "http://localhost:8080/products/findAll", true);
+        xhttp.send();
+
+    }
+
+    loadProducts();
+</script>
+</body>
+</html>
