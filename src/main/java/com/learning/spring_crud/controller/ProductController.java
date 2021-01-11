@@ -24,7 +24,7 @@ public class ProductController {
     }
 
     @PostMapping("/update/{id}")
-    public void saveProduct(@PathVariable Integer id, @RequestParam String description) {
+    public void saveProduct(@PathVariable Integer id, @RequestBody String description) {
         log.info("Handling update product: " + id);
         service.updateProduct(description, id);
     }
