@@ -3,8 +3,6 @@ package com.learning.spring_crud.service;
 import com.learning.spring_crud.entity.Product;
 import com.learning.spring_crud.repository.ProductRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import javax.xml.bind.ValidationException;
@@ -32,12 +30,6 @@ public class DefaultProductService implements ProductService {
     }
 
 
-    @Modifying
-    @Query("update Product p set p.description = ?1 where p.id = ?2")
-    public void updateProduct(String description, Integer id) {
-
-    }
-
     @Override
     public Product findByName(String name) {
         Product product = repository.findByName(name);
@@ -47,6 +39,13 @@ public class DefaultProductService implements ProductService {
     @Override
     public List<Product> findAll() {
         return repository.findAll();
+    }
+
+    @Override
+    public void updateProduct(String description, Integer id) {
+       Product product = repository.getOne(id);
+       product.setDescription(description);
+       repository.save(product);
     }
 
     private void validateProductData(Product product) throws ValidationException {

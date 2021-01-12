@@ -74,12 +74,12 @@
     }
 
     function updateProduct(productId) {
-        var productDescription = prompt('Type a new description', 'No description');
+        var description = prompt('Type a new description', 'No description');
         var xhttp = new XMLHttpRequest();
 
-        xhttp.open("POST", "http://localhost:8080/products/update/" + productId, true);
-        xmlhttp.setRequestHeader("Content-Type", "application/json");
-        xmlhttp.send(JSON.stringify({description: productDescription}));
+        xhttp.open("GET", "http://localhost:8080/products/" + productId
+                            + "/update?description=" + description, true);
+        xhttp.send();
 
         loadProducts();
     }
