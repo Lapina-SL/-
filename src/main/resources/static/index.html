@@ -38,26 +38,35 @@
 <p></p>
 <button onclick="loadProducts()">Show all</button>
 <script>
+
+var tableHeader = '<tr>\n' +
+    '        <th>Product id</th>\n' +
+    '        <th>Product name</th>\n' +
+    '        <th>Product price</th>\n' +
+    '        <th>Product description</th>\n' +
+    '        <th>Update description</th>\n' +
+    '        <th>Delete</th>\n' +
+    '    </tr>';
+
+function tableRow(product){
+  var row = '<tr><td>' + product.id + '</td>\n' +
+      '        <td>' + product.name + '</td>\n' +
+      '        <td>' + product.price + '</td>\n' +
+      '        <td>' + product.description + '</td>\n' +
+      '        <td><button onclick="updateProduct(' + product.id + ')">Update</button></td>\n' +
+      '        <td><button onclick="deleteProduct(' + product.id + ')">Delete</button></td></tr>';
+  return row;
+}
+
+
     function searchByName() {
         var name = document.getElementById("search_field").value;
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 var product = JSON.parse(this.responseText);
-                var html = '<tr>\n' +
-                    '        <th>Product id</th>\n' +
-                    '        <th>Product name</th>\n' +
-                    '        <th>Product price</th>\n' +
-                    '        <th>Product description</th>\n' +
-                    '        <th>Update description</th>\n' +
-                    '        <th>Delete</th>\n' +
-                    '    </tr>';
-                html = html + '<tr><td>' + product.id + '</td>\n' +
-                    '        <td>' + product.name + '</td>\n' +
-                    '        <td>' + product.price + '</td>\n' +
-                    '        <td>' + product.description + '</td>\n' +
-                    '        <td><button onclick="updateProduct(' + product.id + ')">Update</button></td>\n' +
-                    '        <td><button onclick="deleteProduct(' + product.id + ')">Delete</button></td></tr>';
+                var html = tableHeader;
+                html = html + tableRow(product);
                 document.getElementById("productsList").innerHTML = html;
             }
         };
@@ -106,23 +115,11 @@
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 var products = JSON.parse(this.responseText);
-                var html = '<tr>\n' +
-                    '        <th>Product id</th>\n' +
-                    '        <th>Product name</th>\n' +
-                    '        <th>Product price</th>\n' +
-                    '        <th>Product description</th>\n' +
-                    '        <th>Update description</th>\n' +
-                    '        <th>Delete</th>\n' +
-                    '    </tr>';
+                var html = tableHeader;
                 for (var i = 0; i < products.length; i++) {
                     var product = products[i];
                     console.log(product);
-                    html = html + '<tr><td>' + product.id + '</td>\n' +
-                        '        <td>' + product.name + '</td>\n' +
-                        '        <td>' + product.price + '</td>\n' +
-                        '        <td>' + product.description + '</td>' +
-                        '        <td><button onclick="updateProduct(' + product.id + ')">Update</button></td>' +
-                        '        <td><button onclick="deleteProduct(' + product.id + ')">Delete</button></td></tr>';
+                    html = html + tableRow(product);
 
                 }
                 document.getElementById("productsList").innerHTML = html;
